@@ -1,10 +1,8 @@
 #!/usr/bin/python3
-'''index blueprint'''
-
-from api.v1.views import app_views
+"""This module implement a rule that returns the status of the application"""
 from flask import jsonify
-from models import storage
-
+import models
+from api.v1.views import app_views
 from models.amenity import Amenity
 from models.city import City
 from models.place import Place
@@ -13,21 +11,20 @@ from models.state import State
 from models.user import User
 
 
-classes = {"amenities": Amenity, "cities": City,
-           "places": Place, "reviews": Review, "states": State, "users": User}
-
-
-@app_views.route('/status')
-def status():
-    '''returns json object with the app status'''
+@app_views.route("/status", strict_slashes=False)
+def view_status():
+    """View function that return a json message"""
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats')
-def stats():
-    '''retrieves the number of each objects by type'''
-    result = {}
-    for clss in classes:
-        counter = storage.count(classes[clss])
-        result[clss] = counter
-    return jsonify(result)
+@app_views.route("/stats", strict_slashes=False)
+def view_stats():
+    """Veiw function that retrieves the number of each object by type"""
+    return jsonify({
+        "amenities": models.storage.count(Amenity),
+        "cities": models.storage.count(City),
+        "places": models.storage.count(Place),
+        "reviews": models.storage.count(Review),
+        "states": models.storage.count(State),
+        "users": models.storage.count(User)
+    })
